@@ -26,6 +26,7 @@ const generatePolicy = (principalId, effect, resource) => {
 module.exports.auth = (event, context, callback) => {
   console.log('event', event);
   if (!event.authorizationToken) {
+    console.log('Missing event.authorizationToken');
     return callback('Unauthorized');
   }
 
@@ -34,6 +35,7 @@ module.exports.auth = (event, context, callback) => {
 
   if (!(tokenParts[0].toLowerCase() === 'bearer' && tokenValue)) {
     // no auth token!
+    console.log("Header didn't include Bearer tage");
     return callback('Unauthorized');
   }
   const options = {
