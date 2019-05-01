@@ -1,25 +1,14 @@
 version: 2.0
 api_publish: &api_publish
   docker:
-    - image: circleci/node:8.10
+    - image: wilson208/circleci-awscli
   working_directory: ~/swayze-life
   steps:
     - checkout
 
     - run:
-          name: Install dependencies
-          working_directory: /
-          command: |
-            apt-get -y -qq update
-            apt-get -y -qq install python3.4-dev
-            curl -O https://bootstrap.pypa.io/get-pip.py
-            python3.4 get-pip.py --user
-            pip install awscli --upgrade --user
-
-    - run:
         name: Install Serverless CLI and dependencies
         command: |
-            sudo npm i -g serverless
             npm install
 
     - run:
