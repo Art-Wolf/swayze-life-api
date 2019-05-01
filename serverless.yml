@@ -20,6 +20,11 @@ provider:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_BINGO_TABLE}"
 
 functions:
+  auth:
+    runtime: nodejs6.10
+    handler: authorizer/handler.auth
+    cors: true
+
   listBingo:
     handler: bingo/list.bingo
     events:
@@ -27,6 +32,7 @@ functions:
           path: bingos
           method: get
           cors: true
+          authorizer: auth
 
   createBingo:
     handler: bingos/create.bingos
@@ -35,6 +41,7 @@ functions:
           path: bingos
           method: post
           cors: true
+          authorizer: auth
 
   getBingo:
     handler: bingos/get.bingo
@@ -43,12 +50,15 @@ functions:
           path: bingos/{id}
           method: get
           cors: true
+          authorizer: auth
 
   updateBingo:
     handler: bingos/update.bingo
     events:
       - http:
           path: bingos/{id}
+          authorizer: auth
+
           method: put
           cors: true
 
