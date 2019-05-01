@@ -73,7 +73,7 @@ workflows:
             branches:
               only: development
 
-      - api_publish_to_aws_dev:
+      - api_publish_to_aws_prod:
           requires:
             - test_api
           filters:
