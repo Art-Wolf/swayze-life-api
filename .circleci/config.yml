@@ -1,0 +1,187 @@
+version: 2.0
+executors:
+  my-executor:
+    docker:
+      - image: buildpack-deps:jessie
+    working_directory: ~/swayze-life
+
+mobile_publish: &mobile_publish
+  executor: my-executor
+  working_directory: ~/swayze-life
+  docker:
+    - image: circleci/android:api-28-alpha
+  environment:
+    JVM_OPTS: -Xmx3200m
+  steps:
+    - attach_workspace:
+        # Must be absolute path or relative path from working_directory
+        at: .
+
+    - run:
+        name: Setup AWS CLI
+        command: |
+          curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+          unzip awscli-bundle.zip
+          ./awscli-bundle/install -b ~/bin/aws
+
+    - run:
+        name: Download Android Key
+        command: |
+          /home/circleci/bin/aws s3 cp s3://swayzelife-mobile/keys/my-release-key.keystore ~/swayze-life-mobile/mobile/android/app/my-release-key.keystore
+          /home/circleci/bin/aws s3 cp s3://swayzelife-mobile/keys/google-service-account.json ~/swayze-life-mobile/mobile/android/google-service-account.json
+          /home/circleci/bin/aws s3 cp s3://swayzelife-mobile/keys/google-services.json ~/swayze-life-mobile/mobile/android/app/google-services.json
+          echo "MYAPP_RELEASE_STORE_FILE=my-release-key.keystore" >> ~/swayze-life-mobile/mobile/android/gradle.properties
+          echo "MYAPP_RELEASE_KEY_ALIAS=${MOBILE_ANDROID_KEY_ALIAS}" >> ~/swayze-life-mobile/mobile/android/gradle.properties
+          echo "MYAPP_RELEASE_STORE_PASSWORD=${MOBILE_ANDROID_STORE_PASSWORD}" >> ~/swayze-life-mobile/mobile/android/gradle.properties
+          echo "MYAPP_RELEASE_KEY_PASSWORD=${MOBILE_ANDROID_KEY_PASSWORD}" >> ~/swayze-life-mobile/mobile/android/gradle.properties
+
+    - run:
+        name: Configure Environment
+        command: |
+          pwd
+          ls
+          cd mobile
+          echo "API_URL=${API_URL}" > .env
+
+    - run:
+        name: Install fastlane
+        command: |
+          cd mobile/android
+          bundle install
+
+    - run:
+        name: Init fastlane supply
+        command: |
+          cd mobile/android
+          bundle exec fastlane supply init
+
+    - run:
+        name: Build and Publish Android
+        command: |
+          cd mobile/android
+          bundle exec fastlane build
+          bundle exec fastlane $FASTLANE_LANE
+
+api_publish: &api_publish
+  executor: my-executor
+  working_directory: ~/swayze-life
+  docker:
+    - image: "circleci/node:8.10"
+  steps:
+    - attach_workspace:
+        # Must be absolute path or relative path from working_directory
+        at: .
+
+    - run:
+        name: Install Serverless CLI and dependencies
+        command: |
+            cd api
+            sudo npm i -g serverless
+            npm install
+
+    - run:
+        name: Publish to AWS
+        command: |
+            cd api
+            sls deploy --stage $SERVERLESS_RELEASE_CHANNEL
+jobs:
+  setup:
+    executor: my-executor
+    working_directory: ~/swayze-life
+    docker:
+      - image: "circleci/node:8.10"
+    steps:
+      - checkout
+
+      - run:
+          name: Install api dependencies
+          command: |
+            cd api
+            npm install
+
+      - run:
+          name: Install mobile dependencies
+          command: |
+            cd mobile
+            npm install
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - api
+            - mobile
+  test_api:
+    docker:
+      -
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+        image: "circleci/python:2.7"
+    steps:
+      - checkout
+
+      - run:
+          name: Execute Tests
+          command: |
+              cd api
+              sudo pip install pipenv
+              pipenv install
+              pipenv run python -m unittest discover -s bingos/ -p '*_test.py'
+      -
+        store_test_results:
+          path: test-api-results
+    working_directory: ~/swayze-life
+
+  test_mobile:
+    docker:
+      - image: "circleci/node:8.10"
+    steps:
+      - checkout
+
+      - run:
+          name: Execute Tests
+          command: |
+              cd mobile
+              npm install
+              npx jest --ci --updateSnapshot
+      -
+        store_test_results:
+          path: test-mobile-results
+    working_directory: ~/swayze-life
+
+  api_publish_to_aws_dev:
+    environment:
+      SERVERLESS_RELEASE_CHANNEL: dev
+    <<: *api_publish
+
+  api_publish_to_aws_prod:
+    environment:
+      SERVERLESS_RELEASE_CHANNEL: prod
+    <<: *api_publish
+
+  mobile_publish_to_alpha:
+    environment:
+      FASTLANE_LANE: alpha
+    <<: *mobile_publish
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - setup
+      - test_api
+
+      - api_publish_to_aws_dev:
+          requires:
+            - test_api
+            - setup
+          filters:
+            branches:
+              only: development
+      - mobile_publish_to_alpha:
+          requires:
+            - setup
+          filters:
+            branches:
+              only: development

@@ -1,0 +1,10 @@
+{
+  "name": "swayze-life-api",
+  "version": "1.0.0",
+  "description": "Derm's Stag Bingo api",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "deploy": "sls deploy"
+  }
+}

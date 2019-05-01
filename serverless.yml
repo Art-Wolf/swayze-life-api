@@ -1,0 +1,72 @@
+service: swayze-life-api
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python2.7
+  environment:
+    DYNAMODB_BINGO_TABLE: ${self:service}-bingo-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_BINGO_TABLE}"
+
+functions:
+  listBingo:
+    handler: bingo/list.bingo
+    events:
+      - http:
+          path: bingos
+          method: get
+          cors: true
+
+  createBingo:
+    handler: bingos/create.bingos
+    events:
+      - http:
+          path: bingos
+          method: post
+          cors: true
+
+  getBingo:
+    handler: bingos/get.bingo
+    events:
+      - http:
+          path: bingos/{id}
+          method: get
+          cors: true
+
+  updateBingo:
+    handler: bingos/update.bingo
+    events:
+      - http:
+          path: bingos/{id}
+          method: put
+          cors: true
+
+resources:
+  Resources:
+    BingoDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_BINGO_TABLE}

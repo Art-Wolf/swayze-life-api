@@ -1,1 +1,1 @@
-# swayze-life-api
+# SwayzeLife
