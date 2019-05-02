@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // Set in `environment` of serverless.yml
 const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID;
-const AUTH0_CLIENT_PUBLIC_KEY = process.env.AUTH0_CLIENT_PUBLIC_KEY;
+const AUTH0_CLIENT_SECRET_KEY = process.env.AUTH0_CLIENT_SECRET_KEY;
 
 // Policy helper function
 const generatePolicy = (principalId, effect, resource) => {
@@ -43,7 +43,7 @@ module.exports.auth = (event, context, callback) => {
   };
 
   try {
-    jwt.verify(tokenValue, AUTH0_CLIENT_PUBLIC_KEY, options, (verifyError, decoded) => {
+    jwt.verify(tokenValue, AUTH0_CLIENT_SECRET_KEY, options, (verifyError, decoded) => {
       if (verifyError) {
         console.log('verifyError', verifyError);
         // 401 Unauthorized
