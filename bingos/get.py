@@ -3,6 +3,7 @@ import logging
 import os
 import decimal
 import boto3
+from botocore.exceptions import ClientError
 
 ##
 # Helper class to convert a DynamoDB item to JSON.
@@ -42,25 +43,32 @@ def bingo(event, context):
         logger.error("No bingo option id supplied in event.")
         raise Exception("No bingo option id supplied in event.")
 
-    result = table.get_item(
-        Key={
-            'id': event['pathParameters']['id']
-        }
-    )
+    try:
+        result = table.get_item(
+            Key={
+                'id': event['pathParameters']['id']
+            }
+        )
 
-    # If there was no data to get, we get back an empty string
-    if not result.get("Item"):
-        logger.error("No Bingo option to Get")
+        # If there was no data to get, we get back an empty string
+        if not result.get("Item"):
+            logger.error("No Bingo option to Get")
+            response = {
+                "statusCode": 400,
+                "headers": {"Access-Control-Allow-Origin": "*"},
+                "body": "No Bingo option to Get"
+            }
+        else:
+            response = {
+                "statusCode": 200,
+                "headers": {"Access-Control-Allow-Origin": "*"},
+                "body": json.dumps(result['Item'], cls=DecimalEncoder)
+            }
+    except ClientError as e:
         response = {
             "statusCode": 400,
-            "headers": {"Access-Control-Allow-Origin": "*"},  
-            "body": "No Bingo option to Get"
-        }
-    else:
-        response = {
-            "statusCode": 200,
             "headers": {"Access-Control-Allow-Origin": "*"},
-            "body": json.dumps(result['Item'], cls=DecimalEncoder)
+            "body": "No Bingo option to Get"
         }
 
     logger.info("Returning Response: {}".format(response));

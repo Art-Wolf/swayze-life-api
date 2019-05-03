@@ -7,7 +7,7 @@ import random
 import boto3
 import decimal
 from boto3.dynamodb.conditions import Key, Attr
-
+from botocore.exceptions import ClientError
 ##
 # Helper class to convert a DynamoDB item to JSON.
 ##
@@ -69,35 +69,43 @@ def bingo(event, context):
         }
     else:
         timestamp = int(time.time() * 1000)
-        result = table.update_item(
-            Key={
-                'id': event['pathParameters']['id']
-            },
-            ExpressionAttributeValues={
-              ':name': data['name'],
-              ':blurb': data['blurb'],
-              ':icon': data['icon'],
-              ':image': data['image'],
-              ':completed': data['completed'],
-              ':updatedAt': timestamp,
-            },
-            UpdateExpression='SET name = :name, blurb = :blurb, icon = :icon, image = :image, completed = :completed, updatedAt = :updatedAt ',
-            ReturnValues='ALL_NEW',
-        )
 
-        # If there was no data to update, we get back an empty string
-        if not result['Attributes']:
-            logger.error("No Bingo option to Update")
+        try:
+            result = table.update_item(
+                Key={
+                    'id': event['pathParameters']['id']
+                },
+                ExpressionAttributeValues={
+                  ':name': data['name'],
+                  ':blurb': data['blurb'],
+                  ':icon': data['icon'],
+                  ':image': data['image'],
+                  ':completed': data['completed'],
+                  ':updatedAt': timestamp,
+                },
+                UpdateExpression='SET name = :name, blurb = :blurb, icon = :icon, image = :image, completed = :completed, updatedAt = :updatedAt ',
+                ReturnValues='ALL_NEW',
+            )
+
+            # If there was no data to update, we get back an empty string
+            if not result['Attributes']:
+                logger.error("No Bingo option to Update")
+                response = {
+                    "statusCode": 400,
+                    "headers": {"Access-Control-Allow-Origin": "*"},
+                    "body": "No Bingo option to Update"
+                }
+            else:
+                response = {
+                    "statusCode": 200,
+                    "headers": {"Access-Control-Allow-Origin": "*"},
+                    "body": json.dumps(result['Attributes'], cls=DecimalEncoder)
+                }
+        except ClientError as e:
             response = {
                 "statusCode": 400,
                 "headers": {"Access-Control-Allow-Origin": "*"},
                 "body": "No Bingo option to Update"
-            }
-        else:
-            response = {
-                "statusCode": 200,
-                "headers": {"Access-Control-Allow-Origin": "*"},
-                "body": json.dumps(result['Attributes'], cls=DecimalEncoder)
             }
 
     logger.info("Returning Response: {}".format(response));

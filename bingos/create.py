@@ -5,7 +5,7 @@ import time
 import uuid
 import random
 import boto3
-
+from botocore.exceptions import ClientError
 
 ##
 # Configure the logger
@@ -65,14 +65,21 @@ def bingo(event, context):
     logger.info("Creating Bingo option: {}".format(item));
 
     # write the data to the database
-    newItem = table.put_item(Item=item)
+    try:
+        newItem = table.put_item(Item=item)
 
-    # create a response
-    response = {
-        "statusCode": 200,
-        "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps(item)
-    }
+        # create a response
+        response = {
+            "statusCode": 200,
+            "headers": {"Access-Control-Allow-Origin": "*"},
+            "body": json.dumps(item)
+        }
+    except ClientError as e:
+        response = {
+            "statusCode": 400,
+            "headers": {"Access-Control-Allow-Origin": "*"},
+            "body": "Failed to create Bingo option"
+        }
 
     logger.info("Returning Response: {}".format(response));
     return response

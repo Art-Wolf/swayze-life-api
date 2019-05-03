@@ -3,6 +3,7 @@ import logging
 import os
 import decimal
 import boto3
+from botocore.exceptions import ClientError
 
 ##
 # Helper class to convert a DynamoDB item to JSON.
@@ -37,13 +38,19 @@ def bingo(event, context):
     table = dynamodb.Table(os.environ['DYNAMODB_BINGO_TABLE'])
 
     # fetch all todos from the database
-    result = table.scan()
-
-    # create a response
-    response = {
-        "statusCode": 200,
-        "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps(result['Items'], cls=DecimalEncoder)
-    }
+    try:
+        result = table.scan()
+        # create a response
+        response = {
+            "statusCode": 200,
+            "headers": {"Access-Control-Allow-Origin": "*"},
+            "body": json.dumps(result['Items'], cls=DecimalEncoder)
+        }
+    except ClientError as e:
+        response = {
+            "statusCode": 400,
+            "headers": {"Access-Control-Allow-Origin": "*"},
+            "body": "No Bingo options to list"
+        }
 
     return response
