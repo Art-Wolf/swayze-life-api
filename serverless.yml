@@ -7,6 +7,7 @@ provider:
   runtime: python2.7
   environment:
     DYNAMODB_BINGO_TABLE: ${self:service}-bingo-${opt:stage, self:provider.stage}
+    DYNAMODB_USER_TABLE: ${self:service}-user-${opt:stage, self:provider.stage}
     AUTH0_CLIENT_ID: ${file(./authorizer/secrets.json):AUTH0_CLIENT_ID}
     AUTH0_CLIENT_SECRET_KEY: ${file(./authorizer/secrets.json):AUTH0_CLIENT_SECRET_KEY}
   iamRoleStatements:
@@ -20,6 +21,7 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_BINGO_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_USER_TABLE}"
 
 functions:
   auth:
@@ -37,7 +39,7 @@ functions:
           authorizer: auth
 
   createBingo:
-    handler: bingos/create.bingos
+    handler: bingos/create.bingo
     events:
       - http:
           path: bingos
@@ -64,6 +66,41 @@ functions:
           method: put
           cors: true
 
+  listUser:
+    handler: users/list.user
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+          authorizer: auth
+
+  createUser:
+    handler: users/create.user
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+          authorizer: auth
+
+  getUser:
+    handler: users/get.user
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+          authorizer: auth
+
+  updateUser:
+    handler: users/update.user
+    events:
+      - http:
+          path: users/{id}
+          authorizer: auth
+          method: put
+          cors: true
 resources:
   Resources:
     BingoDynamoDbTable:
@@ -82,3 +119,19 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_BINGO_TABLE}
+    UserDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_USER_TABLE}

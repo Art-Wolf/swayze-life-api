@@ -35,7 +35,7 @@ module.exports.auth = (event, context, callback) => {
 
   if (!(tokenParts[0].toLowerCase() === 'bearer' && tokenValue)) {
     // no auth token!
-    console.log("Header didn't include Bearer tage");
+    console.log("Header didn't include Bearer tag.");
     return callback('Unauthorized');
   }
   const options = {
