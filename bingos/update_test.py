@@ -100,7 +100,7 @@ class TestUpdate(unittest.TestCase):
         initialData['blurb'] = { 'S': 'old' }
         initialData['icon'] = { 'S': 'old' }
         initialData['image'] = { 'S': 'old' }
-        initialData['complete'] = { 'BOOL': 'old' }
+        initialData['complete'] = { 'BOOL': False }
 
         dynamo.put_item(
             TableName='swayze-life-bingo-dev',
