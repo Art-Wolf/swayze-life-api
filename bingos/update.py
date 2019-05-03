@@ -75,7 +75,7 @@ def bingo(event, context):
             },
             ExpressionAttributeValues={
               ':name': data['name'],
-              ':blurb': 'blurb': data['blurb'],
+              ':blurb': data['blurb'],
               ':icon': data['icon'],
               ':image': data['image'],
               ':completed': data['completed'],
