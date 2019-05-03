@@ -75,10 +75,13 @@ def bingo(event, context):
             },
             ExpressionAttributeValues={
               ':name': data['name'],
+              ':blurb': 'blurb': data['blurb'],
+              ':icon': data['icon'],
               ':image': data['image'],
+              ':completed': data['completed'],
               ':updatedAt': timestamp,
             },
-            UpdateExpression='SET name = :name, image = :image, updatedAt = :updatedAt ',
+            UpdateExpression='SET name = :name, blurb = :blurb, icon = :icon, image = :image, completed = :completed, updatedAt = :updatedAt ',
             ReturnValues='ALL_NEW',
         )
 

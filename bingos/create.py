@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 ##
 # Required variables
 ##
-keys = ['name', 'image']
+keys = ['name', 'blurb', 'icon', 'image']
 
 ##
 # Validate that the required variables were set
@@ -54,7 +54,10 @@ def bingo(event, context):
     item = {
         'id': str(uuid.uuid1()),
         'name': data['name'],
+        'blurb': data['blurb'],
+        'icon': data['icon'],
         'image': data['image'],
+        'completed': False,
         'createdAt': timestamp,
         'updatedAt': timestamp,
     }

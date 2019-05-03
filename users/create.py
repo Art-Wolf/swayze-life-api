@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 ##
 # Required variables
 ##
-keys = ['name', 'image']
+keys = ['name', 'auth0']
 
 ##
 # Validate that the required variables were set
@@ -54,7 +54,7 @@ def user(event, context):
     item = {
         'id': str(uuid.uuid1()),
         'name': data['name'],
-        'image': data['image'],
+        'auth0': data['auth0'],
         'createdAt': timestamp,
         'updatedAt': timestamp,
     }
