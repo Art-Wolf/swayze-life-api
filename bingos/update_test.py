@@ -59,7 +59,7 @@ class TestUpdate(unittest.TestCase):
 
         # Mock out the Test Event and Path ID
         event = {}
-        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever", "complete": False}'
+        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever", "completed": False}'
         event['pathParameters'] = {}
         event['pathParameters']['id'] = '999'
 
@@ -100,7 +100,7 @@ class TestUpdate(unittest.TestCase):
         initialData['blurb'] = { 'S': 'old' }
         initialData['icon'] = { 'S': 'old' }
         initialData['image'] = { 'S': 'old' }
-        initialData['complete'] = { 'BOOL': False }
+        initialData['completed'] = { 'BOOL': False }
 
         dynamo.put_item(
             TableName='swayze-life-bingo-dev',
@@ -108,7 +108,7 @@ class TestUpdate(unittest.TestCase):
 
         # Mock out the Test Event and Path ID
         event = {}
-        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever", "complete": False}'
+        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever", "completed": false}'
         event['pathParameters'] = {}
         event['pathParameters']['id'] = '123'
 
