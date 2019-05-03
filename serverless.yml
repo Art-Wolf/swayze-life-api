@@ -28,7 +28,7 @@ functions:
     cors: true
 
   listBingo:
-    handler: bingo/list.bingo
+    handler: bingos/list.bingo
     events:
       - http:
           path: bingos
