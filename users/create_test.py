@@ -34,14 +34,14 @@ class TestCreate(unittest.TestCase):
         try:
             user(event, None)
         except Exception as e:
-            self.assertEquals("Couldn't create the user, no image.", e.message)
+            self.assertEquals("Couldn't create the user, no auth0.", e.message)
 
     ##
-    # Tests create user option with only the image set
+    # Tests create user option with only the auth0 set
     ##
-    def test_create_user_address_only(self):
+    def test_create_user_auth0_only(self):
         event = {}
-        event['body'] = '{"image": "whatever"}'
+        event['body'] = '{"auth0": "whatever"}'
 
         try:
             user(event, None)
@@ -73,7 +73,7 @@ class TestCreate(unittest.TestCase):
 
         # Mock out the Test Event
         event = {}
-        event['body'] = '{"name": "Test", "image": "whatever"}'
+        event['body'] = '{"name": "Test", "auth0": "whatever"}'
 
         # Set the table environment name
         os.environ['DYNAMODB_USER_TABLE'] = 'swayze-life-user-dev'

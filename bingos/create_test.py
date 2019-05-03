@@ -25,30 +25,6 @@ class TestCreate(unittest.TestCase):
             self.assertEquals("Couldn't create the bingo option, no body supplied.", e.message)
 
     ##
-    # Tests create bingo option with only the name set
-    ##
-    def test_create_bingo_name_only(self):
-        event = {}
-        event['body'] = '{"name": "Test"}'
-
-        try:
-            bingo(event, None)
-        except Exception as e:
-            self.assertEquals("Couldn't create the bingo option, no image.", e.message)
-
-    ##
-    # Tests create bingo option with only the image set
-    ##
-    def test_create_bingo_address_only(self):
-        event = {}
-        event['body'] = '{"image": "whatever"}'
-
-        try:
-            bingo(event, None)
-        except Exception as e:
-            self.assertEquals("Couldn't create the bingo option, no name.", e.message)
-
-    ##
     # Tests a successful create bingo option
     ##
     @mock_dynamodb2
@@ -73,7 +49,7 @@ class TestCreate(unittest.TestCase):
 
         # Mock out the Test Event
         event = {}
-        event['body'] = '{"name": "Test", "image": "whatever"}'
+        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever"}'
 
         # Set the table environment name
         os.environ['DYNAMODB_BINGO_TABLE'] = 'swayze-life-bingo-dev'
