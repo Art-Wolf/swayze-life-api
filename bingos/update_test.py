@@ -59,7 +59,7 @@ class TestUpdate(unittest.TestCase):
 
         # Mock out the Test Event and Path ID
         event = {}
-        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever", "completed": False}'
+        event['body'] = '{"name": "Test", "blurb": "whatever", "icon": "whatever", "image": "whatever", "completed": false}'
         event['pathParameters'] = {}
         event['pathParameters']['id'] = '999'
 
