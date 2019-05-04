@@ -5,7 +5,7 @@ import time
 import uuid
 import random
 import boto3
-
+import random
 
 ##
 # Configure the logger
@@ -55,6 +55,7 @@ def user(event, context):
         'id': str(uuid.uuid1()),
         'name': data['name'],
         'auth0': data['auth0'],
+        'bingoList': generateBingoList(),
         'createdAt': timestamp,
         'updatedAt': timestamp,
     }
@@ -73,3 +74,15 @@ def user(event, context):
 
     logger.info("Returning Response: {}".format(response));
     return response
+
+def generateBingoList():
+    logger.info("Entering generateBingoList")
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(os.environ['DYNAMODB_BINGO_TABLE'])
+
+    # fetch all todos from the database
+    result = table.scan()
+    random.shuffle(result['Items'])
+
+    return result['Items']
