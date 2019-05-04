@@ -15,7 +15,7 @@ const generatePolicy = (principalId, effect, resource) => {
     const statementOne = {};
     statementOne.Action = 'execute-api:Invoke';
     statementOne.Effect = effect;
-    statementOne.Resource = resource;
+    statementOne.Resource = 'arn:aws:execute-api:us-east-1:196295636944:*'; //resource;
     policyDocument.Statement[0] = statementOne;
     authResponse.policyDocument = policyDocument;
   }
