@@ -8,6 +8,18 @@ import boto3
 import random
 
 ##
+# Helper class to convert a DynamoDB item to JSON.
+##
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            if o % 1 > 0:
+                return float(o)
+            else:
+                return int(o)
+        return super(DecimalEncoder, self).default(o)
+        
+##
 # Configure the logger
 ##
 root = logging.getLogger()
@@ -69,7 +81,7 @@ def user(event, context):
     response = {
         "statusCode": 200,
         "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps(item)
+        "body": json.dumps(item, cls=DecimalEncoder)
     }
 
     logger.info("Returning Response: {}".format(response));
