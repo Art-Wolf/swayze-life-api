@@ -6,6 +6,7 @@ import uuid
 import random
 import boto3
 import random
+import decimal
 
 ##
 # Helper class to convert a DynamoDB item to JSON.
@@ -18,7 +19,7 @@ class DecimalEncoder(json.JSONEncoder):
             else:
                 return int(o)
         return super(DecimalEncoder, self).default(o)
-        
+
 ##
 # Configure the logger
 ##
