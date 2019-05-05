@@ -42,67 +42,67 @@ def calculateScore(user):
     row_3 = 4
     row_4 = 4
 
-    if (user['bingoList'][0]['complete']):
+    if (user['bingoList'][0]['completed']):
         logger.info("Users index 0 is complete")
         column_1 -= 1
         row_1 -= 1
-    if (user['bingoList'][1]['complete']):
+    if (user['bingoList'][1]['completed']):
         logger.info("Users index 1 is complete")
         column_1 -= 1
         row_2 -= 1
-    if (user['bingoList'][2]['complete']):
+    if (user['bingoList'][2]['completed']):
         logger.info("Users index 2 is complete")
         column_1 -= 1
         row_3 -= 1
-    if (user['bingoList'][3]['complete']):
+    if (user['bingoList'][3]['completed']):
         logger.info("Users index 3 is complete")
         column_1 -= 1
         row_4 -= 1
-    if (user['bingoList'][4]['complete']):
+    if (user['bingoList'][4]['completed']):
         logger.info("Users index 4 is complete")
         column_2 -= 1
         row_1 -= 1
-    if (user['bingoList'][5]['complete']):
+    if (user['bingoList'][5]['completed']):
         logger.info("Users index 5 is complete")
         column_2 -= 1
         row_2 -= 1
-    if (user['bingoList'][6]['complete']):
+    if (user['bingoList'][6]['completed']):
         logger.info("Users index 6 is complete")
         column_2 -= 1
         row_3 -= 1
-    if (user['bingoList'][7]['complete']):
+    if (user['bingoList'][7]['completed']):
         logger.info("Users index 7 is complete")
         column_2 -= 1
         row_4 -= 1
-    if (user['bingoList'][8]['complete']):
+    if (user['bingoList'][8]['completed']):
         logger.info("Users index 8 is complete")
         column_3 -= 1
         row_1 -= 1
-    if (user['bingoList'][9]['complete']):
+    if (user['bingoList'][9]['completed']):
         logger.info("Users index 9 is complete")
         column_3 -= 1
         row_2 -= 1
-    if (user['bingoList'][10]['complete']):
+    if (user['bingoList'][10]['completed']):
         logger.info("Users index 10 is complete")
         column_3 -= 1
         row_3 -= 1
-    if (user['bingoList'][11]['complete']):
+    if (user['bingoList'][11]['completed']):
         logger.info("Users index 11 is complete")
         column_3 -= 1
         row_4 -= 1
-    if (user['bingoList'][12]['complete']):
+    if (user['bingoList'][12]['completed']):
         logger.info("Users index 12 is complete")
         column_4 -= 1
         row_1 -= 1
-    if (user['bingoList'][13]['complete']):
+    if (user['bingoList'][13]['completed']):
         logger.info("Users index 13 is complete")
         column_4 -= 1
         row_2 -= 1
-    if (user['bingoList'][14]['complete']):
+    if (user['bingoList'][14]['completed']):
         logger.info("Users index 14 is complete")
         column_4 -= 1
         row_3 -= 1
-    if (user['bingoList'][15]['complete']):
+    if (user['bingoList'][15]['completed']):
         logger.info("Users index 15 is complete")
         column_4 -= 1
         row_4 -= 1
