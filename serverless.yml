@@ -74,6 +74,15 @@ functions:
           method: put
           cors: true
 
+  uncompleteBingo:
+    handler: bingos/uncomplete.bingo
+    events:
+      - http:
+          path: bingos/{id}/uncomplete
+          authorizer: auth
+          method: put
+          cors: true
+
   listUser:
     handler: users/list.user
     events:
