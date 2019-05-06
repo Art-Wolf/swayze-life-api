@@ -62,7 +62,15 @@ functions:
       - http:
           path: bingos/{id}
           authorizer: auth
+          method: put
+          cors: true
 
+  completeBingo:
+    handler: bingos/complete.bingo
+    events:
+      - http:
+          path: bingos/{id}/complete
+          authorizer: auth
           method: put
           cors: true
 
