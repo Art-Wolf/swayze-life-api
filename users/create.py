@@ -69,6 +69,7 @@ def user(event, context):
         'name': data['name'],
         'auth0': data['auth0'],
         'bingoList': generateBingoList(),
+        'squaresToGo': 4,
         'createdAt': timestamp,
         'updatedAt': timestamp,
     }
