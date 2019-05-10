@@ -78,10 +78,11 @@ def bar(event, context):
               'address': data['address'],
               'lat': data['lat'],
               'long': data['long'],
+              'order': data['order'],
               'complete': data['complete'],
               ':updatedAt': timestamp,
             },
-            UpdateExpression='SET name = :name, address = :address, lat = :lat, long = :long, complete = :complete, updatedAt = :updatedAt ',
+            UpdateExpression='SET name = :name, address = :address, lat = :lat, long = :long, order = :order, complete = :complete, updatedAt = :updatedAt ',
             ReturnValues='ALL_NEW',
         )
 

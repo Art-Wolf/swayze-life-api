@@ -70,6 +70,7 @@ def bar(event, context):
         'address': data['address'],
         'lat': data['lat'],
         'long': data['long'],
+        'order': data['order'],
         'complete': False,
         'createdAt': timestamp,
         'updatedAt': timestamp,
