@@ -156,6 +156,24 @@ functions:
           authorizer: auth
           method: put
           cors: true
+
+  completeBar:
+    handler: bars/complete.bar
+    events:
+      - http:
+          path: bars/{id}/complete
+          authorizer: auth
+          method: put
+          cors: true
+
+  uncompleteBar:
+    handler: bars/uncomplete.bar
+    events:
+      - http:
+          path: bars/{id}/uncomplete
+          authorizer: auth
+          method: put
+          cors: true
 resources:
   Resources:
     BingoDynamoDbTable:
