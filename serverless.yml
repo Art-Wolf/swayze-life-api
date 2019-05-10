@@ -8,6 +8,7 @@ provider:
   environment:
     DYNAMODB_BINGO_TABLE: ${self:service}-bingo-${opt:stage, self:provider.stage}
     DYNAMODB_USER_TABLE: ${self:service}-user-${opt:stage, self:provider.stage}
+    DYNAMODB_BAR_TABLE: ${self:service}-bar-${opt:stage, self:provider.stage}
     AUTH0_CLIENT_ID: ${file(./authorizer/secrets.json):AUTH0_CLIENT_ID}
     AUTH0_CLIENT_SECRET_KEY: ${file(./authorizer/secrets.json):AUTH0_CLIENT_SECRET_KEY}
   iamRoleStatements:
@@ -22,6 +23,7 @@ provider:
       Resource:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_BINGO_TABLE}"
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_USER_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_BAR_TABLE}"
 
 functions:
   auth:
@@ -118,6 +120,42 @@ functions:
           authorizer: auth
           method: put
           cors: true
+
+  listBar:
+    handler: bars/list.bar
+    events:
+      - http:
+          path: bars
+          method: get
+          cors: true
+          authorizer: auth
+
+  createBar:
+    handler: bars/create.bar
+    events:
+      - http:
+          path: bars
+          method: post
+          cors: true
+          authorizer: auth
+
+  getBar:
+    handler: bars/get.bar
+    events:
+      - http:
+          path: bars/{id}
+          method: get
+          cors: true
+          authorizer: auth
+
+  updateBar:
+    handler: bars/update.bar
+    events:
+      - http:
+          path: bars/{id}
+          authorizer: auth
+          method: put
+          cors: true
 resources:
   Resources:
     BingoDynamoDbTable:
@@ -152,3 +190,19 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_USER_TABLE}
+    BarDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_BAR_TABLE}
