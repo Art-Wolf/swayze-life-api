@@ -69,10 +69,10 @@ def bar(event, context):
                     'id': confirm['Item']['id']
                 },
                 ExpressionAttributeValues={
-                  ':completed': False,
+                  ':complete': False,
                   ':updatedAt': timestamp,
                 },
-                UpdateExpression='SET completed = :completed, updatedAt = :updatedAt ',
+                UpdateExpression='SET complete = :complete, updatedAt = :updatedAt ',
                 ReturnValues='ALL_NEW',
             )
 
